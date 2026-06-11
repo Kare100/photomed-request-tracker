@@ -62,7 +62,7 @@ export default function App() {
           <h1>PhotoMed Request Tracker</h1>
         </div>
         <p className="tagline">
-          Got a bug, idea, or shoutout about PhotoMed? Drop it below — we're listening.
+          Got a bug, idea, or shoutout about PhotoMed? Drop it below, we're listening.
         </p>
       </header>
 
