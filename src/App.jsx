@@ -35,21 +35,12 @@ export default function App() {
 
   const filteredRequests = useMemo(() => {
     return requests.filter((r) => {
-      if (filters.status !== "all" && r.status !== filters.status) {
-        return false;
-      }
-
-      if (filters.type !== "all" && r.type !== filters.type) {
-        return false;
-      }
-
+      if (filters.status !== "all" && r.status !== filters.status) return false;
+      if (filters.type !== "all" && r.type !== filters.type) return false;
       if (filters.search) {
         const haystack = `${r.name} ${r.email} ${r.message} ${r.company}`.toLowerCase();
-        if (!haystack.includes(filters.search.toLowerCase())) {
-          return false;
-        }
+        if (!haystack.includes(filters.search.toLowerCase())) return false;
       }
-
       return true;
     });
   }, [requests, filters]);
@@ -73,6 +64,14 @@ export default function App() {
           <div className="list-header">
             <h2 id="list-heading">Submitted requests</h2>
             <span className="count-pill">{filteredRequests.length}</span>
+          </div>
+
+          <div className="stats-bar">
+            <span>Total: <strong>{requests.length}</strong></span>
+            <span>New: <strong>{requests.filter(r => r.status === "New").length}</strong></span>
+            <span>In Review: <strong>{requests.filter(r => r.status === "In Review").length}</strong></span>
+            <span>Resolved: <strong>{requests.filter(r => r.status === "Resolved").length}</strong></span>
+            <span>Rejected: <strong>{requests.filter(r => r.status === "Rejected").length}</strong></span>
           </div>
 
           <RequestFilters filters={filters} onFilterChange={handleFilterChange} />
