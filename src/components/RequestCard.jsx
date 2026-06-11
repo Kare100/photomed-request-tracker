@@ -1,7 +1,7 @@
 import { STATUSES } from "../data/options";
 import { formatDate } from "../utils/validation";
 
-export default function RequestCard({ request, onStatusChange }) {
+export default function RequestCard({ request, onStatusChange, onDelete }) {
   const statusClass = `status-${request.status.replace(" ", "-")}`;
 
   return (
@@ -15,7 +15,18 @@ export default function RequestCard({ request, onStatusChange }) {
               {request.email} · {request.company}
             </p>
           </div>
-          <span className="badge type-badge">{request.type}</span>
+          <div className="card-top-right">
+            <span className="badge type-badge">{request.type}</span>
+            <button
+              className="delete-btn"
+              onClick={() => {
+                if (window.confirm("Delete this request?")) onDelete(request.id);
+              }}
+              title="Delete request"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <p className="card-message">{request.message}</p>

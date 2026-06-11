@@ -68,6 +68,17 @@ export function updateRequestStatus(id, newStatus) {
   saveRequests(updated);
   return updated;
 }
+/**
+ * Delete a request by id.
+ * @param {string} id
+ * @returns {Array} the updated list of requests
+ */
+export function deleteRequest(id) {
+  const requests = getRequests();
+  const updated = requests.filter((r) => r.id !== id);
+  saveRequests(updated);
+  return updated;
+}
 
 /** Generate a reasonably unique id. */
 function generateId() {

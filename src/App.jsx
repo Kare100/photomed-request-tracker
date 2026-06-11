@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import RequestForm from "./components/RequestForm";
 import RequestFilters from "./components/RequestFilters";
 import RequestList from "./components/RequestList";
-import { getRequests, addRequest, updateRequestStatus } from "./utils/storage";
+import { getRequests, addRequest, updateRequestStatus, deleteRequest } from "./utils/storage";
 
 const initialFilters = {
   status: "all",
@@ -27,6 +27,10 @@ export default function App() {
   function handleStatusChange(id, newStatus) {
     const updated = updateRequestStatus(id, newStatus);
     setRequests(updated);
+  }
+  function handleDeleteRequest(id) {
+  const updated = deleteRequest(id);
+  setRequests(updated);
   }
 
   function handleFilterChange(key, value) {
@@ -80,6 +84,7 @@ export default function App() {
             requests={filteredRequests}
             allRequestsCount={requests.length}
             onStatusChange={handleStatusChange}
+            onDelete={handleDeleteRequest}
           />
         </section>
       </main>
