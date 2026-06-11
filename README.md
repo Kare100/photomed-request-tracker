@@ -70,13 +70,13 @@ src/
 
 ## What I completed
 
-- ✅ Form with all required fields and validation
-- ✅ Requests appear in the list immediately on submit
-- ✅ Status can be changed per request (New / In Review / Resolved / Rejected)
-- ✅ Filter by status, filter by type, and search by text — all three work
-- ✅ Data persists via localStorage across refreshes
-- ✅ Empty states for "no requests yet" and "no results match your filters"
-- ✅ Responsive layout (form stacks above the list on smaller screens)
+- Form with all required fields and validation
+- Requests appear in the list immediately on submit
+- Status can be changed per request (New / In Review / Resolved / Rejected)
+- Filter by status, filter by type, and search by text — all three work
+- Data persists via localStorage across refreshes
+- Empty states for "no requests yet" and "no results match your filters"
+- Responsive layout (form stacks above the list on smaller screens)
 
 ## What I didn't get to / would improve with more time
 
@@ -89,4 +89,4 @@ src/
 
 ## A note on AI tools
 
-I used AI assistance to help structure the project into components, debug a few issues, and review my README for clarity. The logic, structure, and final implementation are my own — I made sure I understood every part before including it.
+I used AI assistance to help debug a Git issue I ran into (a BOM encoding problem that was causing .gitignore to not work as expected) and to talk through how I'd structure the storage utility if I were to swap localStorage for a real database later.
