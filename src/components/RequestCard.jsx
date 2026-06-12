@@ -1,7 +1,10 @@
 import { STATUSES } from "../data/options";
 import { formatDate } from "../utils/validation";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 
 export default function RequestCard({ request, onStatusChange, onDelete }) {
+  const [showImage, setShowImage] = useState(false);
   const statusClass = `status-${request.status.replace(" ", "-")}`;
 
   return (
@@ -30,6 +33,23 @@ export default function RequestCard({ request, onStatusChange, onDelete }) {
         </div>
 
         <p className="card-message">{request.message}</p>
+
+        {request.attachment && (
+          <>
+            <img
+              src={request.attachment}
+              alt="Attachment"
+              className="card-attachment"
+              onClick={() => setShowImage(true)}
+            />
+            {showImage && createPortal(
+              <div className="image-modal" onClick={() => setShowImage(false)}>
+                <img src={request.attachment} alt="Attachment full size" />
+              </div>,
+              document.body
+            )}
+          </>
+        )}
 
         <div className="card-footer">
           <span className={`badge priority-badge priority-${request.priority}`}>

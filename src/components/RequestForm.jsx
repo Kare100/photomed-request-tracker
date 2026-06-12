@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { PRODUCTS, REQUEST_TYPES, PRIORITIES } from "../data/options";
 import { validateRequestForm } from "../utils/validation";
 
@@ -9,16 +9,44 @@ const initialFormState = {
   type: "",
   priority: "",
   message: "",
+  attachment: null,
 };
 
 export default function RequestForm({ onSubmit }) {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
   const [statusMessage, setStatusMessage] = useState("");
+  const fileInputRef = useRef(null);
 
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) {
+      setFormData((prev) => ({ ...prev, attachment: null }));
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setErrors((prev) => ({ ...prev, attachment: "Please upload an image file." }));
+      return;
+    }
+
+    if (file.size > 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, attachment: "Image must be under 1MB." }));
+      return;
+    }
+
+    setErrors((prev) => ({ ...prev, attachment: "" }));
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData((prev) => ({ ...prev, attachment: reader.result }));
+    };
+    reader.readAsDataURL(file);
   }
 
   function handleSubmit(e) {
@@ -35,6 +63,7 @@ export default function RequestForm({ onSubmit }) {
     setErrors({});
     onSubmit(formData);
     setFormData(initialFormState);
+    if (fileInputRef.current) fileInputRef.current.value = "";
 
     setStatusMessage("Thanks! Your request has been submitted.");
     setTimeout(() => setStatusMessage(""), 3500);
@@ -149,6 +178,23 @@ export default function RequestForm({ onSubmit }) {
             className={errors.message ? "invalid" : ""}
           />
           <span className="error-msg">{errors.message}</span>
+        </div>
+
+        <div className="field">
+          <label htmlFor="attachment">Attach a screenshot (optional)</label>
+          <input
+            type="file"
+            id="attachment"
+            name="attachment"
+            accept="image/*"
+            onChange={handleFileChange}
+            ref={fileInputRef}
+            className={errors.attachment ? "invalid" : ""}
+          />
+          <span className="error-msg">{errors.attachment}</span>
+          {formData.attachment && (
+            <img src={formData.attachment} alt="Preview" className="attachment-preview" />
+          )}
         </div>
 
         <button type="submit" className="submit-btn">
