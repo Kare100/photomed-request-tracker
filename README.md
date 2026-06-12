@@ -3,7 +3,7 @@
 A simple web app for submitting and managing requests (bugs, feature requests, feedback, partnerships, etc.) — built for the PhotoMed software engineering attachment assessment.
 
 ## Live Demo
-> _Add your deployed URL here once hosted (e.g. via Cloudflare Pages / Netlify / Vercel)._
+https://photomed-request-tracker.vercel.app/
 
 ## What it does
 
@@ -11,6 +11,10 @@ A simple web app for submitting and managing requests (bugs, feature requests, f
 - New requests appear instantly at the top of the list
 - Each request has a status (`New`, `In Review`, `Resolved`, `Rejected`) that can be changed directly from its card
 - Filter requests by **status** and **type**, and **search** by name, email, message, or company
+- A summary bar shows the total number of requests and a breakdown by status
+- Delete a request directly from its card
+- Attach a screenshot (under 1MB) to a request - shown as a thumbnail on the card, click to view fullscreen
+- Export all requests to a CSV file
 - Data persists across page refreshes using `localStorage`
 
 ## Tech stack
