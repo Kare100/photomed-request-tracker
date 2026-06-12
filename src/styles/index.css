@@ -549,3 +549,36 @@ input.invalid, select.invalid, textarea.invalid {
   border-radius: 8px;
   pointer-events: none;
 }
+.duplicate-notice {
+  background: #fff8e1;
+  border: 1px solid #ffe08a;
+  color: #8a6d1f;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+}
+.email-preview {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: #f7f9f5;
+  border: 1px solid #d8e2cf;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: #444;
+}
+
+.email-preview-label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #5a7a4a;
+}
+
+.email-subject {
+  margin-bottom: 0.4rem;
+}
+
+.email-body {
+  white-space: pre-line;
+  color: #666;
+}

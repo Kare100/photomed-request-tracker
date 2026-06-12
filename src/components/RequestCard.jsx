@@ -1,11 +1,12 @@
 import { STATUSES } from "../data/options";
-import { formatDate } from "../utils/validation";
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { formatDate, getAutoReplyEmail } from "../utils/validation";
 
 export default function RequestCard({ request, onStatusChange, onDelete }) {
   const [showImage, setShowImage] = useState(false);
   const statusClass = `status-${request.status.replace(" ", "-")}`;
+  const autoReply = getAutoReplyEmail(request);
 
   return (
     <li className="request-card" data-status={request.status}>
@@ -31,6 +32,11 @@ export default function RequestCard({ request, onStatusChange, onDelete }) {
             </button>
           </div>
         </div>
+        {request.similarTo && (
+          <p className="duplicate-notice">
+            Possibly similar to a request from <strong>{request.similarTo.name}</strong> ({formatDate(request.similarTo.createdAt)}) — matched by {request.similarTo.reason === "email" ? "same email" : "similar message"}
+          </p>
+        )}
 
         <p className="card-message">{request.message}</p>
 
@@ -73,6 +79,13 @@ export default function RequestCard({ request, onStatusChange, onDelete }) {
 
           <span className="card-date">{formatDate(request.createdAt)}</span>
         </div>
+        {autoReply && (
+          <div className="email-preview">
+            <p className="email-preview-label">Auto-reply preview (to {request.email}):</p>
+            <p className="email-subject"><strong>Subject:</strong> {autoReply.subject}</p>
+            <p className="email-body">{autoReply.body}</p>
+          </div>
+        )}
       </div>
     </li>
   );

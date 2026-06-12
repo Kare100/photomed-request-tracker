@@ -42,14 +42,17 @@ export function saveRequests(requests) {
 export function addRequest(requestData) {
   const requests = getRequests();
 
+  const similarTo = findSimilarRequest(requestData, requests);
+
   const newRequest = {
     id: generateId(),
     ...requestData,
     status: "New",
     createdAt: new Date().toISOString(),
+    ...(similarTo && { similarTo }),
   };
 
-  const updated = [newRequest, ...requests]; // newest first
+  const updated = [newRequest, ...requests];
   saveRequests(updated);
   return updated;
 }
@@ -113,4 +116,48 @@ export function exportRequestsToCSV(requests) {
 
 function formatDateForCSV(isoString) {
   return new Date(isoString).toLocaleString();
+}
+const STOPWORDS = new Set([
+  "the", "a", "an", "and", "or", "but", "is", "are", "was", "were", "to", "of", "in",
+  "on", "for", "with", "this", "that", "it", "i", "my", "me", "we", "our", "you",
+  "your", "have", "has", "had", "be", "been", "not", "can", "cant", "can't", "app",
+  "please", "would", "like", "also", "just", "really", "very", "get", "getting"
+]);
+
+function getSignificantWords(text) {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .split(/\s+/)
+      .filter((w) => (w.length > 2 || w === "ui") && !STOPWORDS.has(w))
+  );
+}
+
+function similarityScore(textA, textB) {
+  const wordsA = getSignificantWords(textA);
+  const wordsB = getSignificantWords(textB);
+  if (wordsA.size === 0 || wordsB.size === 0) return 0;
+
+  let shared = 0;
+  for (const word of wordsA) {
+    if (wordsB.has(word)) shared++;
+  }
+  return shared / Math.min(wordsA.size, wordsB.size);
+}
+
+/**
+ * Find an existing request that looks like a duplicate of the new one.
+ * Triggers on same email OR message similarity above threshold.
+ */
+function findSimilarRequest(newData, existingRequests) {
+  for (const existing of existingRequests) {
+    const sameEmail = existing.email.toLowerCase() === newData.email.toLowerCase();
+    const score = similarityScore(existing.message, newData.message);
+
+    if (sameEmail || score >= 0.3) {
+      return { id: existing.id, name: existing.name, createdAt: existing.createdAt, reason: sameEmail ? "email" : "message" };
+    }
+  }
+  return null;
 }

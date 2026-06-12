@@ -53,3 +53,15 @@ export function formatDate(isoString) {
     })
   );
 }
+/**
+ * Generate an auto-reply email preview for a resolved request.
+ * Returns null if the request isn't resolved.
+ */
+export function getAutoReplyEmail(request) {
+  if (request.status !== "Resolved") return null;
+
+  return {
+    subject: `Update: your request is now resolved`,
+    body: `Hi ${request.name},\n\nGood news! Your request regarding "${request.type}" has been resolved. If you have any further questions, feel free to reach out again.\n\n— PhotoMed Support`,
+  };
+}
