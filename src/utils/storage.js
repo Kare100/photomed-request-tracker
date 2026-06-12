@@ -87,3 +87,30 @@ function generateId() {
   }
   return `req_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
+/** Export all requests as a CSV file download. */
+export function exportRequestsToCSV(requests) {
+  if (requests.length === 0) return;
+
+  const headers = ["Name", "Email", "Product/Company", "Type", "Priority", "Status", "Message", "Date"];
+  const rows = requests.map((r) => [
+    r.name, r.email, r.company, r.type, r.priority, r.status, r.message, formatDateForCSV(r.createdAt)
+  ]);
+
+  const escapeCell = (cell) => `"${String(cell).replace(/"/g, '""')}"`;
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map(escapeCell).join(","))
+    .join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `photomed-requests-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function formatDateForCSV(isoString) {
+  return new Date(isoString).toLocaleString();
+}

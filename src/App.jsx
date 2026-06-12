@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import RequestForm from "./components/RequestForm";
 import RequestFilters from "./components/RequestFilters";
 import RequestList from "./components/RequestList";
-import { getRequests, addRequest, updateRequestStatus, deleteRequest } from "./utils/storage";
+import { getRequests, addRequest, updateRequestStatus, deleteRequest, exportRequestsToCSV } from "./utils/storage";
 
 const initialFilters = {
   status: "all",
@@ -28,9 +28,10 @@ export default function App() {
     const updated = updateRequestStatus(id, newStatus);
     setRequests(updated);
   }
+
   function handleDeleteRequest(id) {
-  const updated = deleteRequest(id);
-  setRequests(updated);
+    const updated = deleteRequest(id);
+    setRequests(updated);
   }
 
   function handleFilterChange(key, value) {
@@ -71,12 +72,23 @@ export default function App() {
           </div>
 
           <div className="stats-bar">
-            <span>Total: <strong>{requests.length}</strong></span>
-            <span>New: <strong>{requests.filter(r => r.status === "New").length}</strong></span>
-            <span>In Review: <strong>{requests.filter(r => r.status === "In Review").length}</strong></span>
-            <span>Resolved: <strong>{requests.filter(r => r.status === "Resolved").length}</strong></span>
-            <span>Rejected: <strong>{requests.filter(r => r.status === "Rejected").length}</strong></span>
+            <div className="stats-numbers">
+              <span>Total: <strong>{requests.length}</strong></span>
+              <span>New: <strong>{requests.filter(r => r.status === "New").length}</strong></span>
+              <span>In Review: <strong>{requests.filter(r => r.status === "In Review").length}</strong></span>
+              <span>Resolved: <strong>{requests.filter(r => r.status === "Resolved").length}</strong></span>
+              <span>Rejected: <strong>{requests.filter(r => r.status === "Rejected").length}</strong></span>
+            </div>
+            <button
+              className="export-btn"
+              onClick={() => exportRequestsToCSV(requests)}
+              disabled={requests.length === 0}
+            >
+              Export CSV
+            </button>
           </div>
+
+
 
           <RequestFilters filters={filters} onFilterChange={handleFilterChange} />
 
