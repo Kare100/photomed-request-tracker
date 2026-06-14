@@ -36,19 +36,29 @@ export function saveRequests(requests) {
 
 /**
  * Add a new request to storage.
+ * Seeds the activity log with a "created" event.
  * @param {Object} requestData - form data (without id/status/date)
- * @returns {Object} the full request object that was saved
+ * @returns {Array} the updated list of requests
  */
 export function addRequest(requestData) {
   const requests = getRequests();
-
   const similarTo = findSimilarRequest(requestData, requests);
+  const now = new Date().toISOString();
 
   const newRequest = {
     id: generateId(),
     ...requestData,
     status: "New",
-    createdAt: new Date().toISOString(),
+    createdAt: now,
+    notes: [],
+    activity: [
+      {
+        id: generateId(),
+        type: "created",
+        timestamp: now,
+        detail: "Request submitted",
+      },
+    ],
     ...(similarTo && { similarTo }),
   };
 
@@ -59,18 +69,33 @@ export function addRequest(requestData) {
 
 /**
  * Update the status of an existing request.
+ * Logs a "status_change" event to the activity timeline.
  * @param {string} id
  * @param {string} newStatus
  * @returns {Array} the updated list of requests
  */
 export function updateRequestStatus(id, newStatus) {
   const requests = getRequests();
-  const updated = requests.map((r) =>
-    r.id === id ? { ...r, status: newStatus } : r
-  );
+  const updated = requests.map((r) => {
+    if (r.id !== id) return r;
+    return {
+      ...r,
+      status: newStatus,
+      activity: [
+        ...(r.activity || []),
+        {
+          id: generateId(),
+          type: "status_change",
+          timestamp: new Date().toISOString(),
+          detail: `Status changed from ${r.status} to ${newStatus}`,
+        },
+      ],
+    };
+  });
   saveRequests(updated);
   return updated;
 }
+
 /**
  * Delete a request by id.
  * @param {string} id
@@ -83,6 +108,39 @@ export function deleteRequest(id) {
   return updated;
 }
 
+/**
+ * Add an internal note to an existing request.
+ * Also logs a "note_added" event to the activity timeline.
+ * @param {string} id - request id
+ * @param {string} text - note content
+ * @param {string} author - name of the admin adding the note
+ * @returns {Array} the updated list of requests
+ */
+export function addNoteToRequest(id, text, author) {
+  const requests = getRequests();
+  const updated = requests.map((r) => {
+    if (r.id !== id) return r;
+    return {
+      ...r,
+      notes: [
+        ...(r.notes || []),
+        { id: generateId(), text, author, createdAt: new Date().toISOString() },
+      ],
+      activity: [
+        ...(r.activity || []),
+        {
+          id: generateId(),
+          type: "note_added",
+          timestamp: new Date().toISOString(),
+          detail: `Note added by ${author}`,
+        },
+      ],
+    };
+  });
+  saveRequests(updated);
+  return updated;
+}
+
 /** Generate a reasonably unique id. */
 function generateId() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -90,6 +148,7 @@ function generateId() {
   }
   return `req_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
+
 /** Export all requests as a CSV file download. */
 export function exportRequestsToCSV(requests) {
   if (requests.length === 0) return;
@@ -114,9 +173,12 @@ export function exportRequestsToCSV(requests) {
   URL.revokeObjectURL(url);
 }
 
+/** Format a date for CSV export. */
 function formatDateForCSV(isoString) {
   return new Date(isoString).toLocaleString();
 }
+
+/** Set of common words to ignore during similarity checking. */
 const STOPWORDS = new Set([
   "the", "a", "an", "and", "or", "but", "is", "are", "was", "were", "to", "of", "in",
   "on", "for", "with", "this", "that", "it", "i", "my", "me", "we", "our", "you",
@@ -124,6 +186,7 @@ const STOPWORDS = new Set([
   "please", "would", "like", "also", "just", "really", "very", "get", "getting"
 ]);
 
+/** Extract meaningful words from a string for similarity comparison. */
 function getSignificantWords(text) {
   return new Set(
     text
@@ -134,6 +197,10 @@ function getSignificantWords(text) {
   );
 }
 
+/**
+ * Score similarity between two strings based on shared significant words.
+ * Returns a value between 0 (no match) and 1 (identical).
+ */
 function similarityScore(textA, textB) {
   const wordsA = getSignificantWords(textA);
   const wordsB = getSignificantWords(textB);
@@ -156,31 +223,13 @@ function findSimilarRequest(newData, existingRequests) {
     const score = similarityScore(existing.message, newData.message);
 
     if (sameEmail || score >= 0.3) {
-      return { id: existing.id, name: existing.name, createdAt: existing.createdAt, reason: sameEmail ? "email" : "message" };
+      return {
+        id: existing.id,
+        name: existing.name,
+        createdAt: existing.createdAt,
+        reason: sameEmail ? "email" : "message",
+      };
     }
   }
   return null;
-}
-/**
- * Add an internal note to an existing request.
- * @param {string} id - request id
- * @param {string} text - note content
- * @param {string} author - name of the admin adding the note
- * @returns {Array} the updated list of requests
- */
-export function addNoteToRequest(id, text, author) {
-  const requests = getRequests();
-  const updated = requests.map((r) =>
-    r.id === id
-      ? {
-        ...r,
-        notes: [
-          ...(r.notes || []),
-          { id: generateId(), text, author, createdAt: new Date().toISOString() },
-        ],
-      }
-      : r
-  );
-  saveRequests(updated);
-  return updated;
 }
