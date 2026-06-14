@@ -458,6 +458,10 @@ input.invalid, select.invalid, textarea.invalid {
     animation: none;
   }
 }
+
+/* 
+Stats bar — sits above the filters, shows request counts by status and the CSV export button
+ */
 .stats-bar {
   display: flex;
   flex-wrap: wrap;
@@ -558,6 +562,10 @@ input.invalid, select.invalid, textarea.invalid {
   font-size: 0.8rem;
   margin: 0.5rem 0;
 }
+
+/* 
+Email preview panel — shown on cards when status is set to Resolved 
+*/
 .email-preview {
   margin-top: 0.75rem;
   padding: 0.75rem;
@@ -581,4 +589,88 @@ input.invalid, select.invalid, textarea.invalid {
 .email-body {
   white-space: pre-line;
   color: #666;
+}
+/* 
+Internal notes section — shown on all request types except General Feedback 
+*/
+.notes-section {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eee;
+}
+
+.notes-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.05em;
+}
+
+.notes-empty {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-bottom: 0.5rem;
+}
+
+.notes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.note-item {
+  background: #f7f7f5;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+}
+
+.note-text {
+  font-size: 0.85rem;
+  color: #333;
+  margin-bottom: 0.2rem;
+}
+
+.note-date {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.note-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.note-input {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.note-input:focus {
+  outline: none;
+  border-color: #6b8e5a;
+}
+
+.note-submit-btn {
+  background: #6b8e5a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.note-submit-btn:hover {
+  opacity: 0.9;
+}
+.note-author-input {
+  max-width: 150px;
 }

@@ -10,7 +10,7 @@ export const PRODUCTS = [
 ];
 
 export const REQUEST_TYPES = [
-  "Bug",
+  "Bug Report",
   "Feature Request",
   "General Feedback",
   "Partnership",

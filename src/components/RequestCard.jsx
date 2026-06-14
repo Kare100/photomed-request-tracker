@@ -3,10 +3,24 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { formatDate, getAutoReplyEmail } from "../utils/validation";
 
-export default function RequestCard({ request, onStatusChange, onDelete }) {
+export default function RequestCard({ request, onStatusChange, onDelete, onAddNote }) {
   const [showImage, setShowImage] = useState(false);
+  const [noteText, setNoteText] = useState("");
+  const [noteAuthor, setNoteAuthor] = useState("");
   const statusClass = `status-${request.status.replace(" ", "-")}`;
   const autoReply = getAutoReplyEmail(request);
+  const showNotes = request.type !== "General Feedback";
+
+  /**
+ * Submit a new internal note for this request.
+ * Clears the input after submission.
+ */
+  function handleNoteSubmit() {
+    if (!noteText.trim()) return;
+    onAddNote(request.id, noteText.trim(), noteAuthor.trim());
+    setNoteText("");
+    setNoteAuthor("");
+  }
 
   return (
     <li className="request-card" data-status={request.status}>
@@ -84,6 +98,45 @@ export default function RequestCard({ request, onStatusChange, onDelete }) {
             <p className="email-preview-label">Auto-reply preview (to {request.email}):</p>
             <p className="email-subject"><strong>Subject:</strong> {autoReply.subject}</p>
             <p className="email-body">{autoReply.body}</p>
+          </div>
+        )}
+        {showNotes && (
+          <div className="notes-section">
+            <p className="notes-label">Internal notes</p>
+
+            {(request.notes || []).length === 0 && (
+              <p className="notes-empty">No notes yet.</p>
+            )}
+
+            <ul className="notes-list">
+              {(request.notes || []).map((note) => (
+                <li key={note.id} className="note-item">
+                  <p className="note-text">{note.text}</p>
+                  <span className="note-date">{note.author} · {formatDate(note.createdAt)}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="note-input-row">
+              <input
+                type="text"
+                className="note-input note-author-input"
+                placeholder="Your name"
+                value={noteAuthor}
+                onChange={(e) => setNoteAuthor(e.target.value)}
+              />
+              <input
+                type="text"
+                className="note-input"
+                placeholder="Add an internal note..."
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleNoteSubmit(); }}
+              />
+              <button className="note-submit-btn" onClick={handleNoteSubmit}>
+                Add
+              </button>
+            </div>
           </div>
         )}
       </div>

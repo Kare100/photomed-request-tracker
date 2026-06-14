@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import RequestForm from "./components/RequestForm";
 import RequestFilters from "./components/RequestFilters";
 import RequestList from "./components/RequestList";
-import { getRequests, addRequest, updateRequestStatus, deleteRequest, exportRequestsToCSV } from "./utils/storage";
+import { getRequests, addRequest, updateRequestStatus, deleteRequest, exportRequestsToCSV, addNoteToRequest } from "./utils/storage";
 
 const initialFilters = {
   status: "all",
@@ -33,7 +33,16 @@ export default function App() {
     const updated = deleteRequest(id);
     setRequests(updated);
   }
-
+  /**
+ * Add an internal note to a request.
+ * @param {string} id - request id
+ * @param {string} text - note content
+ * @param {string} author - name of the admin adding the note
+ */
+  function handleAddNote(id, text, author) {
+    const updated = addNoteToRequest(id, text, author);
+    setRequests(updated);
+  }
   function handleFilterChange(key, value) {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }
@@ -97,6 +106,7 @@ export default function App() {
             allRequestsCount={requests.length}
             onStatusChange={handleStatusChange}
             onDelete={handleDeleteRequest}
+            onAddNote={handleAddNote}
           />
         </section>
       </main>

@@ -161,3 +161,26 @@ function findSimilarRequest(newData, existingRequests) {
   }
   return null;
 }
+/**
+ * Add an internal note to an existing request.
+ * @param {string} id - request id
+ * @param {string} text - note content
+ * @param {string} author - name of the admin adding the note
+ * @returns {Array} the updated list of requests
+ */
+export function addNoteToRequest(id, text, author) {
+  const requests = getRequests();
+  const updated = requests.map((r) =>
+    r.id === id
+      ? {
+        ...r,
+        notes: [
+          ...(r.notes || []),
+          { id: generateId(), text, author, createdAt: new Date().toISOString() },
+        ],
+      }
+      : r
+  );
+  saveRequests(updated);
+  return updated;
+}

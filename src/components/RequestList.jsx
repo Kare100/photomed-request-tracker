@@ -1,6 +1,6 @@
 import RequestCard from "./RequestCard";
 
-export default function RequestList({ requests, allRequestsCount, onStatusChange, onDelete }) {
+export default function RequestList({ requests, allRequestsCount, onStatusChange, onDelete, onAddNote }) {
   if (allRequestsCount === 0) {
     return (
       <div className="empty-state">
@@ -27,6 +27,7 @@ export default function RequestList({ requests, allRequestsCount, onStatusChange
           request={request}
           onStatusChange={onStatusChange}
           onDelete={onDelete}
+          onAddNote={onAddNote}
         />
       ))}
     </ul>
