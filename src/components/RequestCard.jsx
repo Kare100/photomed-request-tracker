@@ -13,6 +13,19 @@ export default function RequestCard({ request, onStatusChange, onDelete, onAddNo
   const showNotes = request.type !== "General Feedback";
 
   /**
+ * Check if a high priority request has been open for more than 24 hours.
+ * Used to show an overdue warning badge on the card.
+ */
+  function isOverdue(request) {
+    if (request.priority !== "High") return false;
+    if (request.status === "Resolved" || request.status === "Rejected") return false;
+    const ageInHours = (Date.now() - new Date(request.createdAt).getTime()) / (1000 * 60 * 60);
+    return ageInHours > 24;
+  }
+
+  const overdue = isOverdue(request);
+
+  /**
    * Submit a new internal note for this request.
    * Clears the input after submission.
    */
@@ -61,6 +74,12 @@ export default function RequestCard({ request, onStatusChange, onDelete, onAddNo
         {request.similarTo && (
           <p className="duplicate-notice">
             Possibly similar to a request from <strong>{request.similarTo.name}</strong> ({formatDate(request.similarTo.createdAt)}) — matched by {request.similarTo.reason === "email" ? "same email" : "similar message"}
+          </p>
+        )}
+        {/* Overdue warning — shown on High priority requests open for more than 24 hours */}
+        {overdue && (
+          <p className="overdue-notice">
+            ⚠ Overdue — High priority request open for more than 24 hours
           </p>
         )}
 
@@ -161,6 +180,7 @@ export default function RequestCard({ request, onStatusChange, onDelete, onAddNo
                 </div>
               </div>
             )}
+
 
             {/* Activity timeline — chronological log of all events on this request */}
             {(request.activity || []).length > 0 && (

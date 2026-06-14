@@ -743,3 +743,14 @@ Internal notes section — shown on all request types except General Feedback
 .collapse-btn:hover {
   color: #555;
 }
+/* Overdue badge — shown on high priority requests open for more than 24 hours */
+.overdue-notice {
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  color: #e65100;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  margin: 0.5rem 0;
+  font-weight: 500;
+}
