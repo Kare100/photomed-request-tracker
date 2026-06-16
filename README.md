@@ -71,9 +71,9 @@ src/
 
 ## Design decisions
 
-- **Why localStorage and not a database?** The brief explicitly says localStorage is acceptable for the basic version, and a database is an "optional improvement." I've worked with MongoDB before and considered it, but that would mean setting up and hosting a backend (Express + MongoDB Atlas), which felt like more moving parts than this assessment needed — and more places for a deployment to break right before the deadline.
+- **Why localStorage and not a database?** The brief explicitly says localStorage is acceptable for the basic version, and a database is an "optional improvement." I've worked with MongoDB before and considered it, but that would mean setting up and hosting a backend (Express + MongoDB Atlas), which felt like more moving parts than this assessment needed and more places for a deployment to break right before the deadline.
 
-  Instead, `utils/storage.js` exposes a small set of functions (`getRequests`, `addRequest`, `updateRequestStatus`, `deleteRequest`) that the rest of the app calls. To swap in MongoDB later, I'd rewrite the insides of these functions to call an API (and make them `async`) — the components wouldn't need to change much beyond `await`ing them.
+  Instead, `utils/storage.js` exposes a small set of functions (`getRequests`, `addRequest`, `updateRequestStatus`, `deleteRequest`) that the rest of the app calls. To swap in MongoDB later, I'd rewrite the insides of these functions to call an API (and make them `async`) the components wouldn't need to change much beyond `await`ing them.
 
 - **Component breakdown.** I split the UI into `RequestForm`, `RequestFilters`, `RequestList`, and `RequestCard` so each piece has one job and is easy to follow. `App.jsx` owns the shared state (the list of requests and the active filters) and passes data down / handlers down as props.
 
@@ -85,13 +85,13 @@ src/
 
 - **Duplicate detection.** When a new request is submitted, it's checked against all existing ones using word-overlap scoring on the message text, with a similarity threshold of 0.3. Same-email matches are also flagged. This runs entirely client-side in `storage.js` with no extra dependencies.
 
-- **Activity timeline.** Every request carries an `activity: []` array that logs key events — submission, status changes, and notes — with timestamps. This mirrors the audit trail pattern used in real support tools like Zendesk.
+- **Activity timeline.** Every request carries an `activity: []` array that logs key events — submission, status changes, and notes with timestamps. This mirrors the audit trail pattern used in real support tools like Zendesk.
 
 - **Image attachments.** Stored as base64 in localStorage, capped at 1MB per image. The fullscreen preview uses a React Portal so it isn't affected by CSS transforms on the card.
 
 - **Collapsible cards.** Cards default to showing core info (name, email, message, status, priority, date). Notes, activity, attachments, and email previews expand on demand to keep the list scannable.
 
-- **Overdue escalation.** High priority requests that remain open (New or In Review) for more than 24 hours are flagged with a warning badge — a lightweight SLA indicator without needing a backend scheduler.
+- **Overdue escalation.** High priority requests that remain open (New or In Review) for more than 24 hours are flagged with a warning badge, a lightweight SLA indicator without needing a backend scheduler.
 
 - **CSV export.** Generated client-side from the current request list, no backend needed.
 
