@@ -5,6 +5,11 @@ A simple web app for submitting and managing requests (bugs, feature requests, f
 ## Live Demo
 https://photomed-request-tracker.vercel.app/
 
+## Preview
+![Request list view](docs/Screenshot%202026-06-16%20210851.png)
+![Expanded card with notes and timeline](docs/Screenshot%202026-06-16%20210946.png)
+![Duplicate detection and overdue badge](docs/Screenshot%202026-06-16%20211018.png) 
+
 ## What it does
 
 - Submit a request through a form (name, email, product/company, type, priority, message)
