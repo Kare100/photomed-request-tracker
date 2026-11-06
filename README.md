@@ -1,5 +1,7 @@
 # PhotoMed Request Tracker
 
+[![Build](https://github.com/Kare100/photomed-request-tracker/actions/workflows/build.yml/badge.svg)](https://github.com/Kare100/photomed-request-tracker/actions/workflows/build.yml)
+
 A simple web app for submitting and managing requests (bugs, feature requests, feedback, partnerships, etc.) — built for the PhotoMed software engineering attachment assessment.
 
 ## Live Demo
